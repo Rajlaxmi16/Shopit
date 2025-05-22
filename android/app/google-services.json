@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "378653355537",
+    "project_id": "shopit-74521",
+    "storage_bucket": "shopit-74521.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:378653355537:android:f45248666e0c8a06c3cbb0",
+        "android_client_info": {
+          "package_name": "com.example.ecom_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCgOlD4XNq5xQFR5bR5m22ExYCE6yfwzO0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
