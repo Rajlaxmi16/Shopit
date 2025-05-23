@@ -1,9 +1,25 @@
 import 'package:flutter/material.dart';
+import '../data/cart_data.dart';
+import '../models/cart_items.dart';
+import 'cart.dart';
 
 class ProductDetailPage extends StatelessWidget {
   final Map<String, dynamic> product;
-
-  const ProductDetailPage({required this.product});
+  const ProductDetailPage({required this.product, super.key});
+  void toCart(BuildContext context) {
+     cartItems.add(
+      CartItem(
+        name: product['name'],
+        price: product['price'],
+        image: product['image'],
+      ),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Added to cart")));
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => CartScreen()),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,13 +43,16 @@ class ProductDetailPage extends StatelessWidget {
             SizedBox(height: 16),
             Text(product['description'], style: TextStyle(fontSize: 16)),
             SizedBox(height: 20),
-            ElevatedButton(
+            Center(
+              child: ElevatedButton(              
               onPressed: () {
-                
+                toCart(context);
               },
               style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
               child: Text("Add to Cart"),
             ),
+            ),
+            
           ],
         ),
       ),

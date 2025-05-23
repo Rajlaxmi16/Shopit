@@ -10,64 +10,64 @@ class ShopitHome extends StatefulWidget {
 class _ShopitHomeState extends State<ShopitHome> {
   final List<Map<String, dynamic>> recommended = [
     {
-      'name': 'Wireless Headphones',
-      'price': 1999,
+      'name': 'Red label tea',
+      'price': 55,
       'image': 'assets/app_icon.png',
-      'description': 'High-quality wireless headphones with noise cancellation.',
+      'description': '100 g',
     },
     {
-      'name': 'Smart Watch',
-      'price': 2999,
+      'name': 'Amul Milk',
+      'price': 26,
       'image': 'assets/app_icon.png',
-      'description': 'Track your fitness with this stylish smart watch.',
+      'description': '500 ml',
     },
     {
-      'name': 'Smart Watch 2',
-      'price': 2999,
+      'name': 'Madhur Sugar',
+      'price': 56,
       'image': 'assets/app_icon.png',
-      'description': 'Track your fitness with this stylish smart watch.',
+      'description': '1 kg',
     },
   ];
 
   final List<Map<String, dynamic>> trending = [
     {
-      'name': 'Running Shoes',
-      'price': 1499,
+      'name': 'Maggei masala',
+      'price': 60,
       'image': 'assets/app_icon.png',
-      'description': 'Comfortable shoes perfect for daily running.',
+      'description': '2 Minutes instant noodles',
     },
     {
-      'name': 'Bluetooth Speaker',
-      'price': 1299,
+      'name': 'Knor Hot & Sour vegetable soup',
+      'price': 65,
       'image': 'assets/app_icon.png',
-      'description': 'Compact speaker with powerful sound.',
+      'description': 'No added preservatives',
     },
     {
-      'name': 'Bluetooth Speaker 2',
-      'price': 1299,
+      'name': 'Chefs Basket Pasta',
+      'price': 50,
       'image': 'assets/app_icon.png',
-      'description': 'Compact speaker with powerful sound.',
+      'description': 'Drum wheat penne domestic pasta',
     },
   ];
 
   final List<Map<String, dynamic>> topDeals = [
     {
-      'name': 'Laptop Bag',
-      'price': 999,
+      'name': 'Tender Coconut',
+      'price': 65,
       'image': 'assets/app_icon.png',
-      'description': 'Durable and stylish bag for laptops.',
+      'description': 'Free coriander offer',
     },
     {
-      'name': 'Gaming Mouse',
-      'price': 799,
+      'name': 'Watermelon',
+      'price': 63,
       'image': 'assets/app_icon.png',
-      'description': 'Precision mouse for gaming enthusiasts.',
+      'description': 'Free banana offer',
     },
     {
-      'name': 'Gaming Mouse 2 ',
-      'price': 799,
+      'name': 'Chikoo',
+      'price': 48,
       'image': 'assets/app_icon.png',
-      'description': 'Precision mouse for gaming enthusiasts.',
+      'description': 'Free chillies offer',
     },
   ];
 

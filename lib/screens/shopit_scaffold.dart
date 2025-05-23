@@ -1,8 +1,8 @@
 import 'package:ecom_app/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'categories.dart';
-import 'cart.dart';
 import 'profile.dart';
+import 'cart.dart';
 
 class ShopitScaffold extends StatelessWidget {
   final Widget body;

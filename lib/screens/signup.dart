@@ -42,12 +42,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
     setState(() => isLoading = false);
   }
 }
-  //   } catch (e) {
-  //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Sign up failed: $e")));
-  //   } finally {
-  //     setState(() => isLoading = false);
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
