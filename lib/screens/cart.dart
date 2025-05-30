@@ -36,9 +36,19 @@ class _CartScreenState extends State<CartScreen> {
             children: [
               Image.asset(
               'assets/empty_cart.png', 
-              width: 150,
-              height: 150,
+              width: 200,
+              height: 250,
               ),
+              SizedBox(height: 5),
+              Text(
+                'Oops! Your cart is empty.',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: const Color.fromARGB(255, 107, 104, 104),
+                ),
+              ),
+              SizedBox(height: 5),
               ElevatedButton(
                 onPressed: () => toHome(context),
                  child: Text(

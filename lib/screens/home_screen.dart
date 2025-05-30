@@ -37,7 +37,7 @@ class _ShopitHomeState extends State<ShopitHome> {
       'description': '2 Minutes instant noodles',
     },
     {
-      'name': 'Knor Hot & Sour vegetable soup',
+      'name': 'Knor soup',
       'price': 65,
       'image': 'assets/app_icon.png',
       'description': 'No added preservatives',
@@ -100,7 +100,7 @@ class _ShopitHomeState extends State<ShopitHome> {
                 },
                 child: Container(
                   width: 160,
-                  margin: EdgeInsets.symmetric(horizontal: 8),
+                  margin: EdgeInsets.symmetric(horizontal: 4),
                   child: Card(
                     elevation: 4,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -124,6 +124,10 @@ class _ShopitHomeState extends State<ShopitHome> {
                           padding: const EdgeInsets.symmetric(horizontal: 8.0),
                           child: Text("₹${product['price']}"),
                         ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Text(product['description']),
+                        )
                       ],
                     ),
                   ),

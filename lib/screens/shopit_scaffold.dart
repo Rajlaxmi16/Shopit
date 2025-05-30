@@ -56,24 +56,24 @@ class ShopitScaffold extends StatelessWidget {
         return true; 
       },
     child:  Scaffold(
-     backgroundColor:  const Color.fromARGB(255, 221, 244, 243),
+     backgroundColor:  Colors.white,
       appBar: AppBar(
         title: Text(
           'Shopit',
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: const Color.fromARGB(255, 46, 92, 171),
+            color: const Color.fromARGB(255, 203, 17, 17),
           ), 
         ),
-        backgroundColor: const Color.fromARGB(255, 153, 236, 232),
+        backgroundColor: Color(0xFFFFCA28),
         shadowColor: Colors.blueGrey,
       ),
       body: body,
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentIndex,
-        backgroundColor: const Color.fromARGB(255, 153, 236, 232),
-        selectedItemColor: const Color.fromARGB(255, 46, 92, 171),
+        backgroundColor : Colors.white ,
+        selectedItemColor: Colors.orange,
         unselectedItemColor: Colors.grey,
         onTap: (index) => _onTap(context, index),
         items: const [

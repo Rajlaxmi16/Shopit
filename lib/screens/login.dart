@@ -37,6 +37,9 @@ class _LoginScreenState extends State<LoginScreen> {
       case 'user-disabled':
         errorMsg = 'This user has been disabled.';
         break;
+      case 'signInWithEmailAndPassword':
+        errorMsg = 'Please Enter Email and Password';
+        break;  
       default:
         errorMsg = 'Login failed: ${e.message}';
     }
@@ -51,16 +54,16 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 221, 244, 243),
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 153, 236, 232),
+        backgroundColor: Color(0xFFFFCA28),
         shadowColor: Colors.blueGrey,
         title: Text(
           "Login",
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: const Color.fromARGB(255, 46, 92, 171),
+            color: const Color.fromARGB(255, 203, 17, 17),
           ),),
         ),
       body: SafeArea(
@@ -80,7 +83,7 @@ class _LoginScreenState extends State<LoginScreen> {
               style: TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
-                color: const Color.fromARGB(255, 46, 92, 171),
+                color: const Color.fromARGB(255, 203, 17, 17),
               ),
             ),
             
@@ -89,7 +92,7 @@ class _LoginScreenState extends State<LoginScreen> {
               style: TextStyle(
                 fontSize: 20,
                 fontStyle: FontStyle.italic,
-                color: const Color.fromARGB(255, 57, 106, 191),
+                color: const Color.fromARGB(255, 203, 17, 17),
               ),
             ),
             

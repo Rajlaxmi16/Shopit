@@ -46,16 +46,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 221, 244, 243),
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 153, 236, 232),
+        backgroundColor: Color(0xFFFFCA28),
         shadowColor: Colors.blueGrey,
         title: Text(
           "Sign Up",
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: const Color.fromARGB(255, 46, 92, 171),
+            color: const Color.fromARGB(255, 203, 17, 17),
           ),),
         ),
       body: SafeArea(
@@ -74,7 +74,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               style: TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
-                color: const Color.fromARGB(255, 46, 92, 171),
+                color: const Color.fromARGB(255, 203, 17, 17),
               ),
             ),          
             Text(
@@ -82,7 +82,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               style: TextStyle(
                 fontSize: 20,
                 fontStyle: FontStyle.italic,
-                color: const Color.fromARGB(255, 57, 106, 191),
+                color: const Color.fromARGB(255, 203, 17, 17),
               ),
             ),
             SizedBox(height: 5),

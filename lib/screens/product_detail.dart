@@ -26,12 +26,12 @@ class ProductDetailPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(product['name']),
-        backgroundColor: const Color.fromARGB(255, 153, 236, 232),
+        backgroundColor: Color(0xFFFFCA28),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Center(
               child: Image.asset(product['image'], height: 200),
