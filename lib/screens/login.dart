@@ -21,15 +21,36 @@ class _LoginScreenState extends State<LoginScreen> {
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => ShopitHome()));
+       showDialog(
+      context: context,
+      barrierDismissible: false, 
+      builder: (context) {
+        Future.delayed(Duration(seconds: 2), () {
+          Navigator.pop(context);
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => ShopitHome()),
+          );
+        });
+        return AlertDialog(
+          title: Text(
+            'Login Successful',
+              style: TextStyle(
+              color: Colors.green,
+            ),
+            ),
+          content: Text('Redirecting...'),
+        );
+      },
+    );
     } on FirebaseAuthException catch (e) {
     String errorMsg;
     switch (e.code) {
       case 'user-not-found':
         errorMsg = 'No user found for that email.';
         break;
-      case 'wrong-password':
-        errorMsg = 'Wrong password provided.';
+      case 'The supplied auth credential is incorrect, malformed or has expired.':
+        errorMsg = 'Incorrect Email or password';
         break;
       case 'invalid-email':
         errorMsg = 'Invalid email format.';
@@ -43,13 +64,50 @@ class _LoginScreenState extends State<LoginScreen> {
       default:
         errorMsg = 'Login failed: ${e.message}';
     }
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(errorMsg)));
+    
+  //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(errorMsg)));
+  // } catch (e) {
+  //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Something went wrong: $e")));
+  // } finally {
+  //   setState(() => isLoading = false);
+  // }
+  showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(
+          'Login Failed',
+            style: TextStyle(
+              color: Colors.red,
+            ),
+          ),
+        content: Text(errorMsg),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
   } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Something went wrong: $e")));
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Something went wrong'),
+        content: Text(e.toString()),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
   } finally {
     setState(() => isLoading = false);
   }
 }
+
 
   @override
   Widget build(BuildContext context) {
