@@ -1,4 +1,6 @@
+import 'package:ecom_app/screens/home_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '/screens/login.dart';
 import 'dart:async';
 
@@ -15,10 +17,25 @@ class _SplashScreenState extends State<SplashScreen> {
 
     
     Timer(Duration(seconds: 3), () {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => LoginScreen()),
-      );
+
+      final user = FirebaseAuth.instance.currentUser;
+
+      if (user != null) {
+        // User is logged in
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => ShopitHome()),
+        );
+      } else {
+        // User not logged in
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => LoginScreen()),
+        );
+      }
     });
+    //   Navigator.of(context).pushReplacement(
+    //     MaterialPageRoute(builder: (_) => LoginScreen()),
+    //   );
+    // });
   }
 
   @override
