@@ -5,6 +5,9 @@ import '../data/cart_data.dart';
 import 'product_detail.dart';
 import 'shopit_scaffold.dart';
 import '../widgets/top_banner_home.dart';
+import '../widgets/intro_video.dart';
+//import 'package:shared_preferences/shared_preferences.dart';
+
 
 class ShopitHome extends StatefulWidget {
   @override
@@ -20,7 +23,16 @@ class _ShopitHomeState extends State<ShopitHome> {
   @override
 void initState() {
   super.initState();
+
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    showDialog(
+      context: context,
+      builder: (context) => VideoPopup(),
+    );
+  });
+
   loadAllSections();
+  
 }
 
 Future<void> loadAllSections() async {

@@ -40,6 +40,8 @@ dependencies:
   cloud_firestore: ^5.4.5
   intl: ^0.20.2
   http: ^1.4.0
+  video_player: ^2.10.0
+  shared_preferences: ^2.5.3
 
 
 dev_dependencies:
@@ -70,13 +72,12 @@ flutter:
   # the material Icons class.
   uses-material-design: true
   assets:
+    - assets/Shopit.mp4
     - assets/app_icon.png
     - assets/empty_cart.png
     - assets/order_confirmed.png
     - assets/banner/
     - assets/
-
-
 
   # To add assets to your application, add an assets section, like this:
   # assets:
