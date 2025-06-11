@@ -4,6 +4,8 @@ import 'shopit_scaffold.dart';
 import 'login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'product_detail.dart';
+import '../models/cart_items.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -14,6 +16,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final _addressController = TextEditingController();
   bool isEditing = false;
   String? savedAddress;
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -22,6 +25,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void loadAddress() async {
+    setState(() => isLoading = true);
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       final doc =
@@ -34,9 +38,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
         });
       }
     }
+    setState(() => isLoading = false);
   }
 
   Future<void> saveAddress() async {
+    setState(() => isLoading = true);
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       final uid = user.uid;
@@ -57,6 +63,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Address saved successfully')),
         );
+
+        setState(() => isLoading = false);
       }
     }
   }
@@ -76,7 +84,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     return ShopitScaffold(
       currentIndex: 3,
-      body: SingleChildScrollView(
+      body : Stack(
+        children: [
+          SingleChildScrollView(
         padding: EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -198,7 +208,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   itemBuilder: (_, index) {
                     final data = orders[index].data() as Map<String, dynamic>;
                     final total = data['payTotal'];
-                    final status = "Confirmed"; // Placeholder
+                    final status = "Confirmed"; 
                     final date = DateFormat('dd MMM yyyy – hh:mm a')
                         .format((data['timestamp'] as Timestamp).toDate());
 
@@ -213,6 +223,75 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
 
             SizedBox(height: 32),
+            Text("My Wishlist", style: TextStyle(fontSize: 16)),
+              SizedBox(height: 8),
+              StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(user?.uid)
+                    .collection('wishlist')
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+
+                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    return Text("No wishlist items yet.");
+                  }
+
+                  final wishlistItems = snapshot.data!.docs;
+
+                  return ListView.builder(
+                    itemCount: wishlistItems.length,
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemBuilder: (_, index) {
+                      final doc = wishlistItems[index];
+                      final data = doc.data() as Map<String, dynamic>;
+
+                      return Card(
+                        child: ListTile(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => ProductDetailPage(
+                                  product: CartItem(
+                                    name: data['name'],
+                                    price: data['price'],
+                                    image: data['image'],
+                                    quantity: 1,
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                          leading: Image.asset(data['image'], width: 50),
+                          title: Text(data['name']),
+                          subtitle: Text('₹${data['price']}'),
+                          trailing: IconButton(
+                            icon: Icon(Icons.delete, color: Colors.red),
+                            onPressed: () async {
+                              await FirebaseFirestore.instance
+                                  .collection('users')
+                                  .doc(user?.uid)
+                                  .collection('wishlist')
+                                  .doc(doc.id)
+                                  .delete();
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Removed from wishlist')),
+                              );
+                            },
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+
 
             
             Center(
@@ -229,6 +308,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ],
         ),
+      ),
+      if (isLoading)
+      Container(
+        color: Colors.black.withOpacity(0.3),
+        child: Center(child: CircularProgressIndicator()),
+      ),
+        ],
       ),
     );
   }

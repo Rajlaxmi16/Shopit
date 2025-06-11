@@ -46,12 +46,19 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset(
-              'assets/app_icon.png', 
-              width: 150,
-              height: 150,
+              Image.asset(
+              'assets/banner/splash_banner.png', 
+              width: double.infinity,
+              
+              fit: BoxFit.cover,
               
             ),
+            // Image.asset(
+            //   'assets/app_icon.png', 
+            //   width: 150,
+            //   height: 150,
+              
+            // ),
             SizedBox(height: 5),
             Text(
               'Shopit',

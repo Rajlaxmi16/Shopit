@@ -7,6 +7,7 @@ import '../models/cart_items.dart';
 import 'home_screen.dart';
 import 'shopit_scaffold.dart';
 import '../services/payment_service.dart';
+import 'product_detail.dart';
 
 class CartScreen extends StatefulWidget {
   @override
@@ -99,8 +100,19 @@ class _CartScreenState extends State<CartScreen> {
                               ),
                             ],
                           ),
+
+                          
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => ProductDetailPage(product: item),
+                              ),
+                            );
+                          },
                         ),
                       );
+ 
                     },
                   ),
                 ),
@@ -120,6 +132,7 @@ class _CartScreenState extends State<CartScreen> {
                       SizedBox(width: 10),
                       ElevatedButton(
                         onPressed: () {
+                          FocusScope.of(context).unfocus();
                           setState(() {
                             if (_couponController.text.trim().toLowerCase() == 'save25' &&
                                 !_isCouponApplied) {

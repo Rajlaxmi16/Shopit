@@ -340,26 +340,54 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   Widget build(BuildContext context) {
     return ShopitScaffold(
       currentIndex: 1,
-      body: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [  
-          buildSidebar(),
-          Expanded(
-            child: SingleChildScrollView(
-              child:Column(
-                children: [
-                  SizedBox(height: 16),
-                  BannerCarousel(),
-                  buildProductGrid(),
-                ],
-
-              )
-              
-              
+      body: Stack(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            buildSidebar(),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    SizedBox(height: 16),
+                    BannerCarousel(),
+                    buildProductGrid(),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+        if (isLoading)
+          Container(
+            color: Colors.black.withOpacity(0.5),
+            child: Center(
+              child: CircularProgressIndicator(),
             ),
           ),
-        ],
-      ),
+      ],
+    ),
+      // body: Row(
+      //   mainAxisAlignment: MainAxisAlignment.start,
+      //   children: [  
+      //     buildSidebar(),
+      //     Expanded(
+      //       child: SingleChildScrollView(
+      //         child:Column(
+      //           children: [
+      //             SizedBox(height: 16),
+      //             BannerCarousel(),
+      //             buildProductGrid(),
+      //           ],
+
+      //         )
+              
+              
+      //       ),
+      //     ),
+      //   ],
+      // ),
     );
   }
 }

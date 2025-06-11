@@ -64,6 +64,7 @@ Future<void> loadAllSections() async {
         price: data['price'],
         image: data['image'],
         quantity: data['quantity'] ?? 1,
+        description: data['description'],
       );
     }).toList();
   }

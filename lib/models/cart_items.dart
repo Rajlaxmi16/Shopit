@@ -3,12 +3,14 @@ class CartItem {
   final String image;
   final int price;
   int quantity;
+  final String? description;
 
   CartItem({
     required this.name,
     required this.image, 
     required this.price,
-    this.quantity=1
+    this.quantity=1,
+    this.description,
     });
     Map<String, dynamic> toMap() {
     return {
@@ -16,6 +18,7 @@ class CartItem {
       'image': image,
       'price': price,
       'quantity': quantity,
+      'description': description,
     };
   }
 
@@ -25,6 +28,7 @@ class CartItem {
       image: map['image'],
       price: map['price'],
       quantity: map['quantity'] ?? 1,
+      description: map['description'],
     );
   }
 }
