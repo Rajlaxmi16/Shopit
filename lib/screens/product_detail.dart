@@ -22,7 +22,26 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   void initState() {
     super.initState();
     checkIfWishlisted();
+    fetchCartQuantity();
   }
+
+  Future<void> fetchCartQuantity() async {
+  final user = FirebaseAuth.instance.currentUser;
+  if (user == null) return;
+
+  final doc = await FirebaseFirestore.instance
+      .collection('users')
+      .doc(user.uid)
+      .collection('cart')
+      .doc(widget.product.name)
+      .get();
+
+  if (doc.exists) {
+    setState(() {
+      quantity = doc['quantity'] ?? 1;
+    });
+  }
+}
 
   Future<void> toggleWishlist() async {
     final user = FirebaseAuth.instance.currentUser;
@@ -88,7 +107,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       'timestamp': FieldValue.serverTimestamp(),
     });
 
-    // Optional local list update
+    
     final index = cartItems.indexWhere((item) => item.name == widget.product.name);
     if (index != -1) {
       cartItems[index].quantity = quantity;

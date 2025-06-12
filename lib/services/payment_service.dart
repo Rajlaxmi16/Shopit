@@ -66,6 +66,17 @@ class PaymentService {
       await FirebaseFirestore.instance.collection('orders').add(order);
 
       cartItems.clear();
+      // Clear Firestore cart
+      final cartRef = FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .collection('cart');
+
+      final snapshot = await cartRef.get();
+      for (var doc in snapshot.docs) {
+        await doc.reference.delete();
+      }
+
 
       Navigator.pushReplacement(
         context,

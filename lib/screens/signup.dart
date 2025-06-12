@@ -38,7 +38,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       ),
     );
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => LoginScreen()));
-      //Navigator.pop(context);
+      
       }on FirebaseAuthException catch (e) {
     String errorMsg;
     switch (e.code) {
@@ -52,19 +52,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
         errorMsg = 'The password is too weak.';
         break;
       default:
-        errorMsg = 'Sign up failed: ${e.message}';
+        errorMsg = 'Please recheck your Email and Password!';
     }
-//     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(errorMsg)));
-//   } catch (e) {
-//     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Something went wrong: $e")));
-//   } finally {
-//     setState(() => isLoading = false);
-//   }
-// }
+
 showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Login Failed'),
+        title: Text(
+          'Sign Up Failed',
+          style: TextStyle(
+              color: Colors.red,
+            ),
+          ),
         content: Text(errorMsg),
         actions: [
           TextButton(
@@ -78,7 +77,7 @@ showDialog(
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Something went wrong'),
+        title: Text('Please recheck your Email and Password!'),
         content: Text(e.toString()),
         actions: [
           TextButton(

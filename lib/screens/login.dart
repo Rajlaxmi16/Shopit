@@ -62,7 +62,7 @@ class _LoginScreenState extends State<LoginScreen> {
         errorMsg = 'Please Enter Email and Password';
         break;  
       default:
-        errorMsg = 'Login failed: ${e.message}';
+        errorMsg = 'Please recheck your Email and Password! ';
     }
     
   //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(errorMsg)));
@@ -93,7 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Something went wrong'),
+        title: Text('Please recheck your Email and Password!'),
         content: Text(e.toString()),
         actions: [
           TextButton(

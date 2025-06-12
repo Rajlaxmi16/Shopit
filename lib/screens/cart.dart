@@ -19,11 +19,75 @@ class _CartScreenState extends State<CartScreen> {
   bool _isCouponApplied = false;
   double _discountAmount = 0.0;
 
+  @override
+  void initState() {
+    super.initState();
+    fetchCartFromFirestore();
+  }
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    fetchCartFromFirestore();
+  }
+
+  Future<void> fetchCartFromFirestore() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    final snapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .collection('cart')
+        // .collection('carts')
+        // .doc(user.uid)
+        // .collection('items')
+         .get();
+
+    setState(() {
+      cartItems.clear();
+      cartItems.addAll(snapshot.docs.map((doc) {
+        final data = doc.data();
+        return CartItem(
+          name: data['name'],
+          price: data['price'],
+          image: data['image'],
+          quantity: data['quantity'],
+          description: data['description'],
+        );
+      }));
+    });
+  }
+  void updateQuantityInFirestore(CartItem item) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    final docRef = FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .collection('cart')
+        .doc(item.name);
+
+    if (item.quantity > 0) {
+      await docRef.set({
+        'name': item.name,
+        'price': item.price,
+        'image': item.image,
+        'quantity': item.quantity,
+      });
+    } else {
+      
+      await docRef.delete();
+    }
+  }
+
+
+
   void toHome(BuildContext context) {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (_) => ShopitHome()),
     );
+    fetchCartFromFirestore();
   }
 
   @override
@@ -79,15 +143,43 @@ class _CartScreenState extends State<CartScreen> {
                             children: [
                               IconButton(
                                 icon: Icon(Icons.remove_circle_outline),
-                                onPressed: () {
+                                onPressed: () async {
+                                if (item.quantity > 1) {
                                   setState(() {
-                                    if (item.quantity > 1) {
-                                      item.quantity--;
-                                    } else {
-                                      cartItems.removeAt(index);
-                                    }
+                                    item.quantity--;
                                   });
-                                },
+                                  updateQuantityInFirestore(item);
+                                } else {
+                                  
+                                  final user = FirebaseAuth.instance.currentUser;
+                                  if (user != null) {
+                                    await FirebaseFirestore.instance
+                                        .collection('users')
+                                        .doc(user.uid)
+                                        .collection('cart')
+                                        .doc(item.name)
+                                        .delete();
+                                  }
+
+                                  setState(() {
+                                    cartItems.removeAt(index);
+                                  });
+                                }
+                              },
+
+                                // onPressed: () {
+                                //   setState(() {
+                                //     if (item.quantity > 1) {
+                                //       item.quantity--;
+                                //       updateQuantityInFirestore(item);
+                                //     } else {
+                                //       item.quantity = 0;
+                                //       cartItems.removeAt(index);
+                                //       updateQuantityInFirestore(item);
+                                //     }
+                                //   });
+                                  
+                                // },
                               ),
                               Text('${item.quantity}'),
                               IconButton(
@@ -96,6 +188,7 @@ class _CartScreenState extends State<CartScreen> {
                                   setState(() {
                                     item.quantity++;
                                   });
+                                  updateQuantityInFirestore(item);
                                 },
                               ),
                             ],
@@ -482,95 +575,3 @@ class _CartScreenState extends State<CartScreen> {
 
 
 
-// import 'package:ecom_app/screens/shopit_scaffold.dart';
-// import 'package:flutter/material.dart';
-// import '../data/cart_data.dart';
-// import 'home_screen.dart';
-
-// class CartScreen extends StatefulWidget {
-//   @override
-//   _CartScreenState createState() => _CartScreenState();
-// }
-
-// class _CartScreenState extends State<CartScreen> {
-//   void removeItem(int index) {
-//     setState(() {
-//       if (index >= 0 && index < cartItems.length) {
-//         setState(() {
-//         cartItems.removeAt(index);
-//       });
-//       }
-//     });
-//   }
-//   void toHome(BuildContext context){
-//     Navigator.pushReplacement(
-//             context,
-//             MaterialPageRoute(builder: (_) => ShopitHome()),
-//           );
-//   }
-//   @override
-//   Widget build(BuildContext context) {
-//     int total = cartItems.fold(0, (sum, item) => sum + item.price);
-
-//     return ShopitScaffold(
-//       currentIndex: 2,
-//       body: cartItems.isEmpty
-//           ? Center(child:Column(
-//             mainAxisAlignment: MainAxisAlignment.center,
-//             children: [
-//               Image.asset(
-//               'assets/empty_cart.png', 
-//               width: 200,
-//               height: 250,
-//               ),
-//               SizedBox(height: 5),
-//               Text(
-//                 'Oops! Your cart is empty.',
-//                 style: TextStyle(
-//                   fontSize: 24,
-//                   fontWeight: FontWeight.bold,
-//                   color: const Color.fromARGB(255, 107, 104, 104),
-//                 ),
-//               ),
-//               SizedBox(height: 5),
-//               ElevatedButton(
-//                 onPressed: () => toHome(context),
-//                  child: Text(
-//                   'Shop Now',                  
-//                  ))
-//             ],
-//           ),)
-//           : Column(
-//               children: [
-//                 Expanded(
-//                   child: ListView.builder(
-//                     itemCount: cartItems.length,
-//                     itemBuilder: (context, index) {
-//                       if (index < 0 || index >= cartItems.length) {
-//                         return SizedBox(); 
-//                       }
-//                       final item = cartItems[index];
-//                       return Card(
-//                         margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-//                         child: ListTile(
-//                           leading: Image.asset(item.image, width: 50, height: 50),
-//                           title: Text(item.name),
-//                           subtitle: Text("₹${item.price}"),
-//                           trailing: IconButton(
-//                             icon: Icon(Icons.delete, color: Colors.red),
-//                             onPressed: () => removeItem(index),
-//                           ),
-//                         ),
-//                       );
-//                     },
-//                   ),
-//                 ),
-//                 Padding(
-//                   padding: const EdgeInsets.all(16.0),
-//                   child: Text('Total: ₹$total', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-//                 ),
-//               ],
-//             ),
-//     );
-//   }
-// }

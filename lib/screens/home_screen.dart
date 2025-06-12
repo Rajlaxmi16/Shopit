@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../models/cart_items.dart';
 import '../data/cart_data.dart';
 import 'product_detail.dart';
 import 'shopit_scaffold.dart';
 import '../widgets/top_banner_home.dart';
 import '../widgets/intro_video.dart';
+import 'package:collection/collection.dart';
 //import 'package:shared_preferences/shared_preferences.dart';
 
 
@@ -19,9 +21,78 @@ class _ShopitHomeState extends State<ShopitHome> {
 
   bool isLoading = true;
   Map<String, List<CartItem>> allSections = {};
+  
+
+  Future<void> loadCartFromFirestore() async {
+  final user = FirebaseAuth.instance.currentUser; 
+  if (user == null) return; 
+  final uid = user.uid;
+
+  final snapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .collection('cart')
+        // .collection('carts')
+        // .doc(user.uid)
+        // .collection('items')
+         .get();
+
+  cartItems = snapshot.docs.map((doc) {
+    final data = doc.data();
+    return CartItem(
+      name: data['name'],
+      price: data['price'],
+      image: data['image'],
+      quantity: data['quantity'],
+    );
+  }).toList();
+
+  setState(() {});
+}
+  Future<void> addToFirestoreCart(CartItem item) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    
+    
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .collection('cart')
+        .doc(item.name)
+        .set({
+      'name': item.name,
+      'price': item.price,
+      'image': item.image,
+      'quantity': item.quantity,
+    });
+  }
+
+  Future<void> updateCartQuantity(String name, int quantity) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .collection('cart')
+        .doc(name)
+        .update({'quantity': quantity});
+  }
+
+  Future<void> removeFromFirestoreCart(String name) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .collection('cart')
+        .doc(name)
+        .delete();
+  }
+
 
   @override
-void initState() {
+  void initState() {
   super.initState();
 
   WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -31,9 +102,14 @@ void initState() {
     );
   });
 
-  loadAllSections();
+  loadInitialData();
   
 }
+Future<void> loadInitialData() async {
+  await loadCartFromFirestore();
+  await loadAllSections();
+}
+
 
 Future<void> loadAllSections() async {
   final recommended = await fetchProducts("recommended");
@@ -59,11 +135,16 @@ Future<void> loadAllSections() async {
 
     return snapshot.docs.map((doc) {
       final data = doc.data();
+      final cartItem = cartItems.firstWhere(
+      (item) => item.name == data['name'],
+      orElse: () => CartItem(name: '', price: 0, image: '', quantity: 0),
+    );
       return CartItem(
         name: data['name'],
         price: data['price'],
         image: data['image'],
-        quantity: data['quantity'] ?? 1,
+        //quantity: data['quantity'] ?? 1,
+        quantity: cartItem.name != '' ? cartItem.quantity : 1,
         description: data['description'],
       );
     }).toList();
@@ -101,10 +182,14 @@ Future<void> loadAllSections() async {
                 itemBuilder: (context, index) {
                   final product = products[index];
                   final inCart = cartItems.any((item) => item.name == product.name);
-                  final cartItem = cartItems.firstWhere(
+                  CartItem? cartItem = cartItems.firstWhereOrNull(
                     (item) => item.name == product.name,
-                    orElse: () => CartItem(name: '', price: 0, image: '', quantity: 0),
                   );
+
+                  // final cartItem = cartItems.firstWhere(
+                  //   (item) => item.name == product.name,
+                  //   orElse: () => CartItem(name: '', price: 0, image: '', quantity: 0),
+                  // );
 
                   return Container(
                     width: 160,
@@ -154,20 +239,33 @@ Future<void> loadAllSections() async {
                                         icon: Icon(Icons.remove_circle_outline),
                                         onPressed: () {
                                           setState(() {
-                                            if (cartItem.quantity > 1) {
+                                            if (cartItem != null && cartItem.quantity > 1) {
                                               cartItem.quantity--;
-                                            } else {
+                                              updateCartQuantity(cartItem.name, cartItem.quantity);
+                                            }
+                                            // if (cartItem.quantity > 1) {
+                                            //   cartItem.quantity--;
+                                            //   updateCartQuantity(cartItem.name, cartItem.quantity);
+                                            // } 
+                                            else {
                                               cartItems.removeWhere((e) => e.name == product.name);
+                                              removeFromFirestoreCart(product.name);
                                             }
                                           });
                                         },
                                       ),
-                                      Text('${cartItem.quantity}'),
+                                      Text('${cartItem?.quantity ?? 1}'),
+                                      //Text('${cartItem.quantity}'),
                                       IconButton(
                                         icon: Icon(Icons.add_circle_outline),
                                         onPressed: () {
                                           setState(() {
-                                            cartItem.quantity++;
+                                            if (cartItem != null) {
+                                              cartItem.quantity++;
+                                              updateCartQuantity(cartItem.name, cartItem.quantity);
+                                            }
+                                            // cartItem.quantity++;
+                                            // updateCartQuantity(cartItem.name, cartItem.quantity);
                                           });
                                         },
                                       ),
@@ -182,11 +280,26 @@ Future<void> loadAllSections() async {
                                           borderRadius: BorderRadius.circular(10),
                                         ),
                                       ),
-                                      onPressed: () {
+                                      onPressed: () async {
                                         setState(() {
-                                          cartItems.add(product);
+                                          cartItems.add(CartItem(
+                                            name: product.name,
+                                            price: product.price,
+                                            image: product.image,
+                                            quantity: 1,
+                                            description: product.description,
+                                          ));
                                         });
+                                        await addToFirestoreCart(product);  // ensure it gets saved
+                                        setState(() {});  // force UI refresh
                                       },
+
+                                      // onPressed: () {
+                                      //   setState(() {
+                                      //     cartItems.add(product);
+                                      //     addToFirestoreCart(product);
+                                      //   });
+                                      // },
                                       child: Text("Add"),
                                     ),
                                   ),

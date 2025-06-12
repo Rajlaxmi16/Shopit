@@ -5,6 +5,7 @@ import 'shopit_scaffold.dart';
 import 'product_detail.dart';
 //import '../utility/seeding.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../widgets/top_banner_categories.dart';
 
 
@@ -14,9 +15,42 @@ class CategoriesScreen extends StatefulWidget {
   @override
   State<CategoriesScreen> createState() => _CategoriesScreenState();
 }
-
+ 
 class _CategoriesScreenState extends State<CategoriesScreen> {
   int selectedCategoryIndex = 0;
+  final _firestore = FirebaseFirestore.instance;
+  final _auth = FirebaseAuth.instance;
+
+  Future<void> fetchCartFromFirestore() async {
+  final userId = _auth.currentUser?.uid;
+  if (userId == null) return;
+
+  final snapshot = await _firestore.collection('users').doc(userId).collection('cart').get();
+
+  setState(() {
+    cartItems = snapshot.docs.map((doc) => CartItem.fromMap(doc.data())).toList();
+  });
+}
+Future<void> addToCart(CartItem item) async {
+  final userId = _auth.currentUser?.uid;
+  if (userId == null) return;
+
+  await _firestore.collection('users').doc(userId).collection('cart').doc(item.name).set(item.toMap());
+}
+
+Future<void> updateCartQuantity(CartItem item) async {
+  final userId = _auth.currentUser?.uid;
+  if (userId == null) return;
+
+  await _firestore.collection('users').doc(userId).collection('cart').doc(item.name).update({'quantity': item.quantity});
+}
+
+Future<void> removeFromCart(String productName) async {
+  final userId = _auth.currentUser?.uid;
+  if (userId == null) return;
+
+  await _firestore.collection('users').doc(userId).collection('cart').doc(productName).delete();
+}
 
 //   @override
 // void initState() {
@@ -65,109 +99,12 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   @override
   void initState() {
     super.initState();
-    fetchProductsFromFirestore();
-  }
-
-
-
-
-  // final List<Map<String, dynamic>> grocery = [
-  //   {
-  //     'name': 'Atta',
-  //     'price': 300,
-  //     'image': 'assets/app_icon.png',
-  //     'description': '5 kg',
-  //   },
-  //   {
-  //     'name': 'Rice',
-  //     'price': 500,
-  //     'image': 'assets/app_icon.png',
-  //     'description': '5 kg',
-  //   },
-  //   {
-  //     'name': 'Dal',
-  //     'price': 200,
-  //     'image': 'assets/app_icon.png',
-  //     'description': '500 g',
-  //   },
-  //   {
-  //     'name': 'Peanuts',
-  //     'price': 200,
-  //     'image': 'assets/app_icon.png',
-  //     'description': '500 g',
-  //   },
-  // ];
-
-  // final List<Map<String, dynamic>> household = [
-  //   {
-  //     'name': 'Detergent',
-  //     'price': 60,
-  //     'image': 'assets/app_icon.png',
-  //     'description': '1 kg',
-  //   },
-  //   {
-  //     'name': 'Dishwasher',
-  //     'price': 65,
-  //     'image': 'assets/app_icon.png',
-  //     'description': '100 ml',
-  //   },
-  //   {
-  //     'name': 'Floor Cleaner',
-  //     'price': 100,
-  //     'image': 'assets/app_icon.png',
-  //     'description': '500 ml',
-  //   },
-  // ];
-
-  // final List<Map<String, dynamic>> beauty = [
-  //   {
-  //     'name': 'Shower Gel',
-  //     'price': 200,
-  //     'image': 'assets/app_icon.png',
-  //     'description': '200 ml',
-  //   },
-  //   {
-  //     'name': 'Body Lotion',
-  //     'price': 500,
-  //     'image': 'assets/app_icon.png',
-  //     'description': '500 ml',
-  //   },
-  //   {
-  //     'name': 'Shampoo',
-  //     'price': 100,
-  //     'image': 'assets/app_icon.png',
-  //     'description': '150 ml',
-  //   },
-  // ];
-
-
-
-  // List<Map<String, dynamic>> getSelectedProducts() {
-  //   switch (categoryList[selectedCategoryIndex]['name']) {
-  //     case 'Grocery':
-  //       return grocery;
-  //     case 'Household':
-  //       return household;
-  //     case 'Beauty':
-  //       return beauty;
-  //     default:
-  //       return [];
-  //   }
-  // }
-  // List<Map<String, dynamic>> getSelectedProducts() {
-  //   switch (categoryList[selectedCategoryIndex]['name']) {
-  //     case 'Grocery': return grocery;
-  //     case 'Household': return household;
-  //     case 'Beauty': return beauty;
-  //     default: return [];
-  //   }
-  // }
+    fetchProductsFromFirestore().then((_) => fetchCartFromFirestore());
+  } 
   List<Map<String, dynamic>> getSelectedProducts() {
   String selectedCategory = categoryList[selectedCategoryIndex]['name'];
   return categoryProducts[selectedCategory] ?? [];
 }
-
-
 
   Widget buildSidebar() {
     return Container(
@@ -280,24 +217,47 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                         children: [
                           IconButton(
                             icon: Icon(Icons.remove_circle_outline),
-                            onPressed: () {
+                            onPressed: () async {
                               setState(() {
                                 if (cartItem.quantity > 1) {
                                   cartItem.quantity--;
                                 } else {
-                                  cartItems.removeWhere((e) => e.name == product['name']);
+                                  cartItems.removeWhere((e) => e.name == cartItem.name);
                                 }
                               });
+
+                              if (cartItem.quantity > 0) {
+                                await updateCartQuantity(cartItem);
+                              } else {
+                                await removeFromCart(cartItem.name);
+                              }
                             },
+
+                            // onPressed: () {
+                            //   setState(() {
+                            //     if (cartItem.quantity > 1) {
+                            //       cartItem.quantity--;
+                            //     } else {
+                            //       cartItems.removeWhere((e) => e.name == product['name']);
+                            //     }
+                            //   });
+                            // },
                           ),
                           Text('${cartItem.quantity}'),
                           IconButton(
                             icon: Icon(Icons.add_circle_outline),
-                            onPressed: () {
+                            onPressed: () async {
                               setState(() {
                                 cartItem.quantity++;
                               });
+                              await updateCartQuantity(cartItem);
                             },
+
+                            // onPressed: () {
+                            //   setState(() {
+                            //     cartItem.quantity++;
+                            //   });
+                            // },
                           ),
                         ],
                       )
@@ -311,19 +271,30 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                               borderRadius: BorderRadius.circular(10),
                             ),
                           ),
-                        onPressed: () {
-                          setState(() {
-                            cartItems.add(CartItem.fromMap(
-                              product
-                            ));
-                            // cartItems.add(CartItem(
-                            //   name: product['name'],
-                            //   price: product['price'],
-                            //   image: product['image'],
-                            //   quantity: 1,
-                            // ));
-                          });
-                        },
+                          onPressed: () async {
+                            final existingItem = cartItems.firstWhere(
+                              (item) => item.name == product['name'],
+                              orElse: () => CartItem(name: '', price: 0, image: '', quantity: 0),
+                            );
+
+                            setState(() {
+                              if (existingItem.name != '') {
+                                existingItem.quantity++;
+                              } else {
+                                cartItems.add(CartItem.fromMap(product));
+                              }
+                            });
+
+                            await addToCart(CartItem.fromMap(product));
+                          },
+
+                        // onPressed: () {
+                        //   setState(() {
+                        //     cartItems.add(CartItem.fromMap(
+                        //       product
+                        //     ));                         
+                        //   });
+                        // },
                         child: Text("Add"),
                       ),
                 )

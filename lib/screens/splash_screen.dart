@@ -21,21 +21,18 @@ class _SplashScreenState extends State<SplashScreen> {
       final user = FirebaseAuth.instance.currentUser;
 
       if (user != null) {
-        // User is logged in
+        
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (_) => ShopitHome()),
         );
       } else {
-        // User not logged in
+        
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (_) => LoginScreen()),
         );
       }
     });
-    //   Navigator.of(context).pushReplacement(
-    //     MaterialPageRoute(builder: (_) => LoginScreen()),
-    //   );
-    // });
+    
   }
 
   @override
@@ -53,12 +50,7 @@ class _SplashScreenState extends State<SplashScreen> {
               fit: BoxFit.cover,
               
             ),
-            // Image.asset(
-            //   'assets/app_icon.png', 
-            //   width: 150,
-            //   height: 150,
-              
-            // ),
+            
             SizedBox(height: 5),
             Text(
               'Shopit',
