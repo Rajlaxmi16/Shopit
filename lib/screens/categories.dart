@@ -231,17 +231,7 @@ Future<void> removeFromCart(String productName) async {
                               } else {
                                 await removeFromCart(cartItem.name);
                               }
-                            },
-
-                            // onPressed: () {
-                            //   setState(() {
-                            //     if (cartItem.quantity > 1) {
-                            //       cartItem.quantity--;
-                            //     } else {
-                            //       cartItems.removeWhere((e) => e.name == product['name']);
-                            //     }
-                            //   });
-                            // },
+                            },                           
                           ),
                           Text('${cartItem.quantity}'),
                           IconButton(
@@ -251,13 +241,7 @@ Future<void> removeFromCart(String productName) async {
                                 cartItem.quantity++;
                               });
                               await updateCartQuantity(cartItem);
-                            },
-
-                            // onPressed: () {
-                            //   setState(() {
-                            //     cartItem.quantity++;
-                            //   });
-                            // },
+                            },                      
                           ),
                         ],
                       )
@@ -287,14 +271,6 @@ Future<void> removeFromCart(String productName) async {
 
                             await addToCart(CartItem.fromMap(product));
                           },
-
-                        // onPressed: () {
-                        //   setState(() {
-                        //     cartItems.add(CartItem.fromMap(
-                        //       product
-                        //     ));                         
-                        //   });
-                        // },
                         child: Text("Add"),
                       ),
                 )
@@ -339,26 +315,6 @@ Future<void> removeFromCart(String productName) async {
           ),
       ],
     ),
-      // body: Row(
-      //   mainAxisAlignment: MainAxisAlignment.start,
-      //   children: [  
-      //     buildSidebar(),
-      //     Expanded(
-      //       child: SingleChildScrollView(
-      //         child:Column(
-      //           children: [
-      //             SizedBox(height: 16),
-      //             BannerCarousel(),
-      //             buildProductGrid(),
-      //           ],
-
-      //         )
-              
-              
-      //       ),
-      //     ),
-      //   ],
-      // ),
     );
   }
 }

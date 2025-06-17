@@ -32,9 +32,6 @@ class _ShopitHomeState extends State<ShopitHome> {
         .collection('users')
         .doc(user.uid)
         .collection('cart')
-        // .collection('carts')
-        // .doc(user.uid)
-        // .collection('items')
          .get();
 
   cartItems = snapshot.docs.map((doc) {
@@ -290,8 +287,8 @@ Future<void> loadAllSections() async {
                                             description: product.description,
                                           ));
                                         });
-                                        await addToFirestoreCart(product);  // ensure it gets saved
-                                        setState(() {});  // force UI refresh
+                                        await addToFirestoreCart(product);  
+                                        setState(() {}); 
                                       },
 
                                       // onPressed: () {

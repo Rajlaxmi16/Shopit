@@ -45,7 +45,23 @@ class PaymentService {
         ),
       );
 
-      await stripe.Stripe.instance.presentPaymentSheet();
+      //await stripe.Stripe.instance.presentPaymentSheet();
+      try {
+        await stripe.Stripe.instance.presentPaymentSheet();
+      } on stripe.StripeException catch (e) {
+        print('Stripe Exception: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Payment cancelled or failed: ${e.error.localizedMessage ?? e.toString()}')),
+        );
+        return; 
+      } catch (e) {
+        print('Unknown error: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('An unexpected error occurred during payment.')),
+        );
+        return; 
+      }
+
 
       final order = {
         'uid': user.uid,
@@ -66,7 +82,7 @@ class PaymentService {
       await FirebaseFirestore.instance.collection('orders').add(order);
 
       cartItems.clear();
-      // Clear Firestore cart
+      
       final cartRef = FirebaseFirestore.instance
           .collection('users')
           .doc(user.uid)
@@ -76,7 +92,6 @@ class PaymentService {
       for (var doc in snapshot.docs) {
         await doc.reference.delete();
       }
-
 
       Navigator.pushReplacement(
         context,
@@ -91,88 +106,3 @@ class PaymentService {
   }
 }
 
-
-// import 'package:flutter/material.dart';
-// import 'package:flutter_stripe/flutter_stripe.dart';
-// import 'package:http/http.dart' as http;
-// import 'dart:convert';
-
-// class PaymentService {
-//   Future<void> makePayment(double amountInPaise, BuildContext context) async {
-//   try {
-//     // Show loading
-//     showDialog(
-//       context: context,
-//       barrierDismissible: false,
-//       builder: (_) => Center(child: CircularProgressIndicator()),
-//     );
-
-//     // Step 1: Create PaymentIntent
-//     final response = await http.post(
-//       Uri.parse('https://evqsvbdfvi.execute-api.us-east-1.amazonaws.com/dev/createPaymentIntent'),
-//       headers: {'Content-Type': 'application/json'},
-//       body: jsonEncode({'amount': amountInPaise}),
-//     );
-
-//     if (response.statusCode != 200) {
-//       Navigator.of(context).pop(); // remove loader
-//       throw Exception('Failed to create PaymentIntent');
-//     }
-
-//     final jsonResponse = jsonDecode(response.body);
-//     final clientSecret = jsonResponse['clientSecret'];
-
-//     // Step 2: Init Payment Sheet
-//     await Stripe.instance.initPaymentSheet(
-//       paymentSheetParameters: SetupPaymentSheetParameters(
-//         paymentIntentClientSecret: clientSecret,
-//         merchantDisplayName: 'Shopit',
-//       ),
-//     );
-
-//     Navigator.of(context).pop(); // remove loader
-
-//     // Step 3: Present Payment Sheet
-//     await Stripe.instance.presentPaymentSheet();
-
-//     ScaffoldMessenger.of(context).showSnackBar(
-//       SnackBar(content: Text("Payment successful!")),
-//     );
-//   } catch (e) {
-//     Navigator.of(context).pop(); // ensure loader is removed
-//     ScaffoldMessenger.of(context).showSnackBar(
-//       SnackBar(content: Text("Payment failed: $e")),
-//     );
-//     print('Payment error: $e');
-//   }
-// }
-
-  // Future<void> makePayment(int amountInPaise) async {
-  //   try {
-  //     // Step 1: Call your Lambda URL
-  //     final response = await http.post(
-  //       Uri.parse('https://evqsvbdfvi.execute-api.us-east-1.amazonaws.com/dev/createPaymentIntent'),
-  //       headers: {'Content-Type': 'application/json'},
-  //       body: jsonEncode({'amount': amountInPaise}),
-  //     );
-
-  //     final jsonResponse = jsonDecode(response.body);
-
-  //     // Step 2: Initialize Stripe
-  //     await Stripe.instance.initPaymentSheet(
-  //       paymentSheetParameters: SetupPaymentSheetParameters(
-  //         paymentIntentClientSecret: jsonResponse['clientSecret'],
-  //         merchantDisplayName: 'Shopit',
-  //         //style: ThemeMode.light,
-  //       ),
-  //     );
-
-  //     // Step 3: Show Payment Sheet
-  //     await Stripe.instance.presentPaymentSheet();
-
-  //     print('Payment completed');
-  //   } catch (e) {
-  //     print('Payment failed: $e');
-  //   }
-  // }
-//}
