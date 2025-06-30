@@ -1,19 +1,52 @@
- HEAD
-# ecom_app
+# 🛍️ Shopit – Flutter E-Commerce App
 
-A new Flutter project.
+**Shopit** is a fully functional e-commerce mobile application built with **Flutter** and **Firebase**. It allows users to browse products, manage a cart, apply coupons, view order history, and perform secure checkouts — providing a seamless online grocery shopping experience.
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+## 📱 Screenshots
 
-A few resources to get you started if this is your first Flutter project:
+| Home Screen | Categories | Cart | Profile |
+|-------------|------------|------|---------|
+| ![Home](screenshots/home.jpg) | ![Categories](screenshots/categories.jpg) | ![Cart](screenshots/cart.jpg) | ![Profile](screenshots/profile.jpg) |
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+---
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-# Shopit
-An E-commerce app
+## 🚀 Features
+
+- 🔐 Firebase Authentication
+- 🛒 Add to Cart, Quantity Management
+- 🧾 Order History with Time & Status
+- 📦 Shipping Address Management
+- 💸 Coupon Code Application & GST Calculation
+- 🧠 Product Recommendations
+- 🔍 Category-wise Product Listing
+- ❤️ Wishlist (Firestore synced)
+- ☁️ Firebase Firestore as backend
+- 📱 Responsive UI with custom design
+
+---
+
+## 🛠️ Tech Stack
+
+- **Flutter** – Frontend
+- **Firebase Authentication** – User Management
+- **Firebase Firestore** – Realtime Database
+- **Firebase Storage** – Product Images
+- **Stripe** –  Payment Gateway
+
+---
+
+## 📦 Project Structure
+
+```bash
+lib/
+├── data/
+├── models/
+├── provider/
+├── screens/
+├── services/
+├── utility/
+├── widgets/
+└── main.dart
+
