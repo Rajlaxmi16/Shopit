@@ -6,6 +6,10 @@ import '/screens/home_screen.dart';
 import '/screens/login.dart';
 import 'services/transition.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
+import 'provider/cart_provider.dart';
+import 'provider/authentication_provider.dart';
+import 'provider/wishlist_provider.dart';
+
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
